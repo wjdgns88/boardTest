@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="post">
+
+	<!-- 전체 게시판 정보 조회 -->
+	<select id="selectAllPost" resultType="postVo">
+		select * from post
+	</select>
+	
+	<!--  -->
+	<select id="searchPost" parameterType="int" resultType="postVo">
+		select * from post
+			where board_id = #{board_id}
+	</select>
+	
+	<!-- 게시글 정보 페이징 조회 -->
+	<select id="getPostPageList" resultType="postVo" parameterType="map">
+
+ 		  SELECT *
+      FROM
+      (select a.*, ROWNUM rn
+      FROM
+      (select post_Id, lpad('└>', (level-1)*4, '　') || post_title as POST_title, Board_id, post_group,post_content,post_dt,post_delet,post_id2,id
+      from POST
+      where BOARD_id = ${boardId}
+      start with POST_ID2 is null
+      connect by PRIOR POST_ID=POST_ID2
+      order siblings by post_dt desc) a)
+      WHERE rn BETWEEN (#{page}-1)*#{pageSize}+1 AND #{page}*#{pageSize}
+      
+      
+	</select>
+	<select id="getPostTotCnt" resultType="int" parameterType="int">
+		SELECT COUNT(*)
+			FROM post
+				WHERE board_id = #{board_id }
+	</select>
+	
+	<select id="selectPost" resultType="postVo" parameterType="int">
+		select * from post
+			where post_id = #{post_id}
+	</select>
+	
+	
+	<insert id="insertPost" parameterType="postVo" >
+		insert into post (post_id, board_id, id, post_group, post_title, POST_CONTENT,post_dt,post_delet)
+        VALUES(post_id.nextval,#{board_id},#{id}, post_id.nextval,#{post_title},#{post_content}, #{post_dt},#{post_delet})
+	</insert>
+	
+	<!-- 학생정보 업데이트-->
+	<update id="postUpdate" parameterType="postVo">
+		UPDATE post SET post_content = #{post_content}, 
+							post_title = #{post_title}, 
+							post_dt = #{post_dt}
+		WHERE post_id = #{post_id}
+	</update> 
+	
+	<update id="postdelete" parameterType="postVo">
+		UPDATE post SET post_delet = #{post_delet} 
+		WHERE post_id = #{post_id}
+	</update> 
+	
+	<insert id="insertPostReply" parameterType="postVo">
+		insert into post 
+        VALUES(post_id.nextval,#{board_id},#{post_id2},#{id},#{post_group},#{post_title},#{post_content}, #{post_dt},#{post_delet})
+        <selectKey resultType="int" order="AFTER">
+        	select max(post_id) from post
+        </selectKey>
+	</insert>
+	
+	
+	
+	
+	
+	
+	
+</mapper>

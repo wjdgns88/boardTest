@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="file">
+
+	<!-- 게시글 번호로 파일 조회 -->
+	<select id="selectFile" parameterType="int" resultType="fileVo">
+		select * from fileup
+			where post_id = #{post_id}
+	</select>
+	
+	
+	<insert id="insertFile" parameterType="fileVo" >
+		Insert into fileup (file_id, post_id, file_up, file_path, file_name)
+		VALUES (file_id.nextval ,post_id.CURRVAL ,#{file_up},#{file_path}, #{file_name})
+	</insert>
+	
+	<insert id="updateFile" parameterType="fileVo" >
+		Insert into fileup (file_id, post_id, file_up, file_path, file_name)
+		VALUES (file_id.nextval ,#{post_id} ,#{file_up},#{file_path}, #{file_name})
+	</insert>
+	
+	<!-- 게시판 정보 업데이트 -->
+<!-- 	<update id="boardUpdate" parameterType="boardVo"> -->
+<!-- 		UPDATE board SET board_id = #{board_id},  -->
+<!-- 							board_name = #{board_name},  -->
+<!-- 							board_delet = #{board_delet}, -->
+<!-- 							id = #{id}, -->
+<!-- 							board_dt = #{board_dt} -->
+<!-- 		WHERE board_id = #{board_id} -->
+<!-- 	</update> -->
+</mapper>
